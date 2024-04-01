@@ -1,7 +1,7 @@
 import Link from "next/link";
-import styles from "./exercise.module.css";
+import styles from "./exercise-item.module.css";
 
-export default function Exercise({
+export default function ExerciseItem({
   text,
   path,
 }: {
