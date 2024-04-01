@@ -1,0 +1,26 @@
+.link {
+  text-decoration: none;
+  color: inherit;
+  width: 50%;
+}
+
+.exercise {
+  border: 1px solid #d7d7d8;
+  padding: 1rem;
+  height: 250px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-transform: uppercase;
+}
+
+.exercise:hover {
+  border: 1px solid black;
+  cursor: pointer;
+}
+
+@media (width < 1024px) {
+  .link {
+    width: 100%;
+  }
+}

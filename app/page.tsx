@@ -1,3 +1,11 @@
+import { Exercise } from "./components";
+import "./global.css";
+
 export default function Home() {
-  return <h1>Home</h1>;
+  return (
+    <main className="exercises">
+      <Exercise text="Exercise 1" path="exercise1"/>
+      <Exercise text="Exercise 2" path="exercise2"/>
+    </main>
+  );
 }

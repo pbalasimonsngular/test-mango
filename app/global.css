@@ -1,3 +1,18 @@
 body {
   margin: 0;
 }
+
+.exercises {
+  padding: 0 1rem;
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  gap: 1rem;
+}
+
+@media (width < 1024px) {
+  .exercises {
+    flex-direction: column;
+  }
+}
