@@ -28,6 +28,6 @@
 
 .min-selector:hover,
 .max-selector:hover {
-  width: 14px;
-  height: 14px;
+  width: 10px;
+  height: 10px;
 }

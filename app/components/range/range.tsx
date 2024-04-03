@@ -14,6 +14,8 @@ export default function Range({
   isDraggingMax,
   handleMouseDown,
   rangeRef,
+  minRef,
+  maxRef,
 }: {
   width: number;
   valueMin: number;
@@ -25,7 +27,20 @@ export default function Range({
   valueText: string;
   handleMouseDown: any;
   rangeRef: RefObject<HTMLDivElement>;
+  minRef: RefObject<HTMLDivElement>;
+  maxRef: RefObject<HTMLDivElement>;
 }) {
+  const minPercentage = ((currentMin - valueMin) / (valueMax - valueMin)) * 100;
+  const maxPercentage = ((currentMax - valueMin) / (valueMax - valueMin)) * 100;
+
+  const minSelectorStyle = {
+    left: `${minPercentage}%`,
+  };
+
+  const maxSelectorStyle = {
+    left: `${maxPercentage}%`,
+  };
+
   return (
     <>
       <div
@@ -44,20 +59,22 @@ export default function Range({
           onMouseDown={() => handleMouseDown("min")}
           className={styles["min-selector"]}
           style={{
-            left: `${currentMin}px`,
+            ...minSelectorStyle,
             cursor: isDraggingMin ? "grabbing" : "grab",
           }}
           tabIndex={1}
+          ref={minRef}
         ></div>
         <div
           data-id="max"
           onMouseDown={() => handleMouseDown("max")}
           className={styles["max-selector"]}
           style={{
-            left: `${currentMax}px`,
+            ...maxSelectorStyle,
             cursor: isDraggingMax ? "grabbing" : "grab",
           }}
           tabIndex={2}
+          ref={maxRef}
         ></div>
       </div>
       <div>

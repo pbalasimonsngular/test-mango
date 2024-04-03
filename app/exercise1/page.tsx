@@ -10,6 +10,8 @@ import { MIN, MAX } from "../constants/range";
 
 export default function Exercise1() {
   const rangeRef = useRef<HTMLDivElement>(null);
+  const minRef = useRef<HTMLDivElement>(null);
+  const maxRef = useRef<HTMLDivElement>(null);
   const [rangeLimits, setRangeLimits] = useState({ min: MIN, max: MAX });
   const [currentValues, setCurrentValues] = useState({ min: MIN, max: MAX });
   const [isDragging, setIsDragging] = useState({ min: false, max: false });
@@ -20,12 +22,9 @@ export default function Exercise1() {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response: RangeResponse = await getNormalRange();
-        setRangeLimits({ min: response.min, max: response.max });
-      } catch (error) {
-        setRangeLimits({ min: MIN, max: MAX });
-      }
+      const { min, max }: RangeResponse = await getNormalRange();
+      setRangeLimits({ min, max });
+      setCurrentValues({ min, max });
     };
 
     fetchData();
@@ -42,16 +41,21 @@ export default function Exercise1() {
 
   const handleMouseMove = (event: MouseEvent) => {
     if (isDragging.min || isDragging.max) {
-      moveSliderPosition(event);
+      calculatePosition(event);
     }
   };
+  const calculatePosition = (event: MouseEvent) => {
+    const rangeBoundingClientRect = rangeRef.current?.getBoundingClientRect();
+    const minBoundingClientRect = minRef.current?.getBoundingClientRect();
+    const maxBoundingClientRect = maxRef.current?.getBoundingClientRect();
 
-  const moveSliderPosition = (event: MouseEvent) => {
-    const sliderBoundingClientRect = rangeRef.current?.getBoundingClientRect();
-
-    if (sliderBoundingClientRect) {
-      const posX = event.clientX - sliderBoundingClientRect.left;
-      const totalWidth = sliderBoundingClientRect.width;
+    if (
+      rangeBoundingClientRect &&
+      minBoundingClientRect &&
+      maxBoundingClientRect
+    ) {
+      const posX = event.clientX - rangeBoundingClientRect.left;
+      const totalWidth = rangeBoundingClientRect.width;
 
       let selectedValue = Math.round(
         (posX / totalWidth) * (rangeLimits.max - rangeLimits.min) +
@@ -60,17 +64,46 @@ export default function Exercise1() {
       selectedValue = Math.max(rangeLimits.min, selectedValue);
       selectedValue = Math.min(rangeLimits.max, selectedValue);
 
-      const range = getRange();
+      const minPosition =
+        ((currentValues.min - rangeLimits.min) /
+          (rangeLimits.max - rangeLimits.min)) *
+        totalWidth;
+      const maxPosition =
+        ((currentValues.max - rangeLimits.min) /
+          (rangeLimits.max - rangeLimits.min)) *
+        totalWidth;
 
-      if (range === "min") {
-        if (selectedValue + 10 >= currentValues.max) {
-          selectedValue = currentValues.max - 10;
+      if (isDragging.min) {
+        // Calcular la nueva posición máxima permitida para la bola mínima
+        const maxAllowedPosition = maxPosition - minBoundingClientRect.width;
+        const newPosition =
+          ((selectedValue - rangeLimits.min) /
+            (rangeLimits.max - rangeLimits.min)) *
+          totalWidth;
+        if (newPosition > maxAllowedPosition) {
+          selectedValue =
+            Math.round(
+              (maxAllowedPosition / totalWidth) *
+                (rangeLimits.max - rangeLimits.min)
+            ) + rangeLimits.min;
         }
-      } else {
-        if (selectedValue - 10 <= currentValues.min) {
-          selectedValue = currentValues.min + 10;
+      } else if (isDragging.max) {
+        // Calcular la nueva posición mínima permitida para la bola máxima
+        const minAllowedPosition = minPosition + minBoundingClientRect.width;
+        const newPosition =
+          ((selectedValue - rangeLimits.min) /
+            (rangeLimits.max - rangeLimits.min)) *
+          totalWidth;
+        if (newPosition < minAllowedPosition) {
+          selectedValue =
+            Math.round(
+              (minAllowedPosition / totalWidth) *
+                (rangeLimits.max - rangeLimits.min)
+            ) + rangeLimits.min;
         }
       }
+
+      const range = getRange();
 
       setCurrentValues({
         ...currentValues,
@@ -81,12 +114,10 @@ export default function Exercise1() {
 
   useEffect(() => {
     if (isDragging.min || isDragging.max) {
-      console.log("useEffect => isDragging");
       window.addEventListener("mousemove", handleMouseMove);
       window.addEventListener("mouseup", handleMouseUp);
     }
     return () => {
-      console.log("useEffect => return");
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
     };
@@ -96,6 +127,8 @@ export default function Exercise1() {
     <div className={styles.container}>
       <Range
         rangeRef={rangeRef}
+        minRef={minRef}
+        maxRef={maxRef}
         width={500}
         handleMouseDown={handleMouseDown}
         valueMin={rangeLimits.min}
