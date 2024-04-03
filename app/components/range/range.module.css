@@ -1,0 +1,33 @@
+.range {
+  position: relative;
+  height: 2px;
+  background-color: black;
+  position: relative;
+  border-radius: 5px;
+}
+
+.min-selector {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  background-color: black;
+  border-radius: 50%;
+}
+
+.max-selector {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  background-color: black;
+  border-radius: 50%;
+}
+
+.min-selector:hover,
+.max-selector:hover {
+  width: 14px;
+  height: 14px;
+}
