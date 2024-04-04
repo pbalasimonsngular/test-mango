@@ -1,3 +1,31 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.min-amount-container {
+  display: flex;
+  margin-right: 1rem;
+}
+
+.min-amount-amount {
+  text-align: right;
+  width: 40px;
+  border: 0;
+}
+
+.max-amount-container {
+  display: flex;
+  margin-left: 1rem;
+}
+
+.max-amount-amount {
+  text-align: left;
+  width: 40px;
+  border: 0;
+}
+
 .range {
   position: relative;
   height: 2px;

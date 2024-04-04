@@ -13,7 +13,7 @@ export default function Exercise1() {
   const minRef = useRef<HTMLDivElement>(null);
   const maxRef = useRef<HTMLDivElement>(null);
   const [rangeLimits, setRangeLimits] = useState({ min: MIN, max: MAX });
-  const [currentValues, setCurrentValues] = useState({ min: MIN, max: MAX });
+  const [currentValues, setCurrentValues] = useState({ min: 1000, max: 9000 });
   const [isDragging, setIsDragging] = useState({ min: false, max: false });
 
   const getRange = () => {
@@ -24,7 +24,6 @@ export default function Exercise1() {
     const fetchData = async () => {
       const { min, max }: RangeResponse = await getNormalRange();
       setRangeLimits({ min, max });
-      setCurrentValues({ min, max });
     };
 
     fetchData();
@@ -74,7 +73,6 @@ export default function Exercise1() {
         totalWidth;
 
       if (isDragging.min) {
-        // Calcular la nueva posición máxima permitida para la bola mínima
         const maxAllowedPosition = maxPosition - minBoundingClientRect.width;
         const newPosition =
           ((selectedValue - rangeLimits.min) /
@@ -88,7 +86,6 @@ export default function Exercise1() {
             ) + rangeLimits.min;
         }
       } else if (isDragging.max) {
-        // Calcular la nueva posición mínima permitida para la bola máxima
         const minAllowedPosition = minPosition + minBoundingClientRect.width;
         const newPosition =
           ((selectedValue - rangeLimits.min) /
@@ -108,6 +105,30 @@ export default function Exercise1() {
       setCurrentValues({
         ...currentValues,
         [range]: selectedValue,
+      });
+    }
+  };
+
+  const handleInputChange = (event, id: string) => {
+    const newValue = parseFloat(event.target.value);
+
+    if (
+      id === "min" &&
+      newValue >= rangeLimits.min &&
+      newValue < currentValues.max
+    ) {
+      setCurrentValues({
+        ...currentValues,
+        [id]: newValue,
+      });
+    } else if (
+      id === "max" &&
+      newValue <= rangeLimits.max &&
+      newValue > currentValues.min
+    ) {
+      setCurrentValues({
+        ...currentValues,
+        [id]: newValue,
       });
     }
   };
@@ -138,6 +159,7 @@ export default function Exercise1() {
         currentMax={currentValues.max}
         isDraggingMin={isDragging.min}
         isDraggingMax={isDragging.max}
+        onInputChange={handleInputChange}
       />
     </div>
   );
