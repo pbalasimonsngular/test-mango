@@ -4,23 +4,23 @@
   align-items: center;
 }
 
-.min-amount-container {
+.min-container {
   display: flex;
   margin-right: 1rem;
 }
 
-.min-amount-amount {
+.min-amount {
   text-align: right;
   width: 40px;
   border: 0;
 }
 
-.max-amount-container {
+.max-container {
   display: flex;
   margin-left: 1rem;
 }
 
-.max-amount-amount {
+.max-amount {
   text-align: left;
   width: 40px;
   border: 0;

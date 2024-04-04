@@ -1,7 +1,8 @@
 "use client";
 
-import { RefObject } from "react";
+import { ChangeEvent, FocusEvent, useEffect, useState } from "react";
 import styles from "./range.module.css";
+import { RangeProps } from "../models/range";
 
 export default function Range({
   width,
@@ -17,21 +18,10 @@ export default function Range({
   minRef,
   maxRef,
   onInputChange,
-}: {
-  width: number;
-  valueMin: number;
-  valueMax: number;
-  currentMin: number;
-  currentMax: number;
-  isDraggingMin: boolean;
-  isDraggingMax: boolean;
-  valueText: string;
-  handleMouseDown: any;
-  rangeRef: RefObject<HTMLDivElement>;
-  minRef: RefObject<HTMLDivElement>;
-  maxRef: RefObject<HTMLDivElement>;
-  onInputChange: any;
-}) {
+}: RangeProps) {
+  const [min, setMin] = useState(currentMin);
+  const [max, setMax] = useState(currentMax);
+
   const minPercentage = ((currentMin - valueMin) / (valueMax - valueMin)) * 100;
   const maxPercentage = ((currentMax - valueMin) / (valueMax - valueMin)) * 100;
 
@@ -43,15 +33,40 @@ export default function Range({
     left: `${maxPercentage}%`,
   };
 
+  const handleInputChange = (
+    event: ChangeEvent<HTMLInputElement>,
+    key: string
+  ) => {
+    const { value } = event.target;
+    if (key === "min") {
+      setMin(Number(value));
+    } else if (key === "max") {
+      setMax(Number(value));
+    }
+  };
+
+  const handleBlur = (event: FocusEvent<HTMLInputElement>, key: string) => {
+    onInputChange(event, key);
+  };
+
+  useEffect(() => {
+    setMin(currentMin);
+  }, [currentMin]);
+
+  useEffect(() => {
+    setMax(currentMax);
+  }, [currentMax]);
+
   return (
     <>
       <div className={styles.container}>
-        <div className={styles["min-amount-container"]}>
+        <div className={styles["min-container"]}>
           <input
             type="text"
-            className={styles["min-amount-amount"]}
-            value={currentMin}
-            onChange={(e) => onInputChange(e, "min")}
+            className={styles["min-amount"]}
+            value={min}
+            onChange={(event) => handleInputChange(event, "min")}
+            onBlur={(event) => handleBlur(event, "min")}
           />
           <span>€</span>
         </div>
@@ -67,7 +82,6 @@ export default function Range({
           ref={rangeRef}
         >
           <div
-            data-id="min"
             onMouseDown={() => handleMouseDown("min")}
             className={styles["min-selector"]}
             style={{
@@ -78,7 +92,6 @@ export default function Range({
             ref={minRef}
           ></div>
           <div
-            data-id="max"
             onMouseDown={() => handleMouseDown("max")}
             className={styles["max-selector"]}
             style={{
@@ -89,12 +102,13 @@ export default function Range({
             ref={maxRef}
           ></div>
         </div>
-        <div className={styles["max-amount-container"]}>
+        <div className={styles["max-container"]}>
           <input
             type="text"
-            className={styles["max-amount-amount"]}
-            value={currentMax}
-            onChange={(e) => onInputChange(e, "max")}
+            className={styles["max-amount"]}
+            value={max}
+            onChange={(event) => handleInputChange(event, "max")}
+            onBlur={(event) => handleBlur(event, "max")}
           />
           <span>€</span>
         </div>

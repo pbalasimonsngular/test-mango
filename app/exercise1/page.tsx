@@ -1,20 +1,20 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { FocusEvent, useEffect, useRef, useState } from "react";
 import { Range } from "../components";
 import { getNormalRange } from "../services/range";
 
 import styles from "./page.module.css";
 import { RangeResponse } from "../components/models/range";
-import { MIN, MAX } from "../constants/range";
 
 export default function Exercise1() {
   const rangeRef = useRef<HTMLDivElement>(null);
   const minRef = useRef<HTMLDivElement>(null);
   const maxRef = useRef<HTMLDivElement>(null);
-  const [rangeLimits, setRangeLimits] = useState({ min: MIN, max: MAX });
-  const [currentValues, setCurrentValues] = useState({ min: 1000, max: 9000 });
+  const [rangeLimits, setRangeLimits] = useState({ min: 0, max: 0 });
+  const [currentValues, setCurrentValues] = useState({ min: 0, max: 0 });
   const [isDragging, setIsDragging] = useState({ min: false, max: false });
+  const [selectorPoints, setSelectorPoints] = useState(0);
 
   const getRange = () => {
     return isDragging.min ? "min" : "max";
@@ -28,6 +28,35 @@ export default function Exercise1() {
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (rangeLimits.min !== null && rangeLimits.max !== null) {
+      setCurrentValues({ min: 0, max: rangeLimits.max });
+      const selectorPoints = calculateSelectorPoints();
+      setSelectorPoints(selectorPoints);
+    }
+  }, [rangeLimits]);
+
+  const calculateSelectorPoints = () => {
+    let selectorPoints = 0;
+
+    if (minRef.current && rangeRef.current) {
+      const rangeBoundingClientRect = rangeRef.current?.getBoundingClientRect();
+      const minBoundingClientRect = minRef.current?.getBoundingClientRect();
+
+      const minSelectorLeftPosition =
+        minBoundingClientRect.left - rangeBoundingClientRect.left;
+      const minSelectorRightPosition =
+        minSelectorLeftPosition + minRef.current.offsetWidth;
+
+      const selectorWidth = minSelectorRightPosition - minSelectorLeftPosition;
+
+      const rangeWidth = rangeBoundingClientRect.width;
+      const rangePoints = rangeLimits.max - rangeLimits.min;
+      selectorPoints = Math.round((selectorWidth * rangePoints) / rangeWidth);
+    }
+    return selectorPoints;
+  };
 
   const handleMouseDown = (range: string) => {
     setIsDragging({ ...isDragging, [range]: true });
@@ -45,14 +74,8 @@ export default function Exercise1() {
   };
   const calculatePosition = (event: MouseEvent) => {
     const rangeBoundingClientRect = rangeRef.current?.getBoundingClientRect();
-    const minBoundingClientRect = minRef.current?.getBoundingClientRect();
-    const maxBoundingClientRect = maxRef.current?.getBoundingClientRect();
 
-    if (
-      rangeBoundingClientRect &&
-      minBoundingClientRect &&
-      maxBoundingClientRect
-    ) {
+    if (rangeBoundingClientRect) {
       const posX = event.clientX - rangeBoundingClientRect.left;
       const totalWidth = rangeBoundingClientRect.width;
 
@@ -63,41 +86,16 @@ export default function Exercise1() {
       selectedValue = Math.max(rangeLimits.min, selectedValue);
       selectedValue = Math.min(rangeLimits.max, selectedValue);
 
-      const minPosition =
-        ((currentValues.min - rangeLimits.min) /
-          (rangeLimits.max - rangeLimits.min)) *
-        totalWidth;
-      const maxPosition =
-        ((currentValues.max - rangeLimits.min) /
-          (rangeLimits.max - rangeLimits.min)) *
-        totalWidth;
-
-      if (isDragging.min) {
-        const maxAllowedPosition = maxPosition - minBoundingClientRect.width;
-        const newPosition =
-          ((selectedValue - rangeLimits.min) /
-            (rangeLimits.max - rangeLimits.min)) *
-          totalWidth;
-        if (newPosition > maxAllowedPosition) {
-          selectedValue =
-            Math.round(
-              (maxAllowedPosition / totalWidth) *
-                (rangeLimits.max - rangeLimits.min)
-            ) + rangeLimits.min;
-        }
-      } else if (isDragging.max) {
-        const minAllowedPosition = minPosition + minBoundingClientRect.width;
-        const newPosition =
-          ((selectedValue - rangeLimits.min) /
-            (rangeLimits.max - rangeLimits.min)) *
-          totalWidth;
-        if (newPosition < minAllowedPosition) {
-          selectedValue =
-            Math.round(
-              (minAllowedPosition / totalWidth) *
-                (rangeLimits.max - rangeLimits.min)
-            ) + rangeLimits.min;
-        }
+      if (
+        isDragging.min &&
+        selectedValue + selectorPoints > currentValues.max
+      ) {
+        return;
+      } else if (
+        isDragging.max &&
+        selectedValue - selectorPoints < currentValues.min
+      ) {
+        return;
       }
 
       const range = getRange();
@@ -109,27 +107,36 @@ export default function Exercise1() {
     }
   };
 
-  const handleInputChange = (event, id: string) => {
+  const handleInputChange = (
+    event: FocusEvent<HTMLInputElement>,
+    key: string
+  ) => {
     const newValue = parseFloat(event.target.value);
 
-    if (
-      id === "min" &&
-      newValue >= rangeLimits.min &&
-      newValue < currentValues.max
-    ) {
-      setCurrentValues({
-        ...currentValues,
-        [id]: newValue,
-      });
-    } else if (
-      id === "max" &&
-      newValue <= rangeLimits.max &&
-      newValue > currentValues.min
-    ) {
-      setCurrentValues({
-        ...currentValues,
-        [id]: newValue,
-      });
+    if (key === "min") {
+      if (newValue >= rangeLimits.min && newValue < currentValues.max) {
+        setCurrentValues({
+          ...currentValues,
+          [key]: newValue,
+        });
+      } else {
+        setCurrentValues({
+          ...currentValues,
+          min: currentValues.max - selectorPoints,
+        });
+      }
+    } else {
+      if (newValue <= rangeLimits.max && newValue > currentValues.min) {
+        setCurrentValues({
+          ...currentValues,
+          [key]: newValue,
+        });
+      } else {
+        setCurrentValues({
+          ...currentValues,
+          max: currentValues.min + selectorPoints,
+        });
+      }
     }
   };
 
