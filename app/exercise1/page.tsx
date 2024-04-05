@@ -111,30 +111,48 @@ export default function Exercise1() {
     event: FocusEvent<HTMLInputElement>,
     key: string
   ) => {
-    const newValue = parseFloat(event.target.value);
+    const newValue = Number(event.target.value);
 
     if (key === "min") {
-      if (newValue >= rangeLimits.min && newValue < currentValues.max) {
+      if (newValue < rangeLimits.min || isNaN(newValue)) {
+        setCurrentValues({
+          ...currentValues,
+          [key]: rangeLimits.min,
+        });
+        return;
+      } else {
+        if (newValue + selectorPoints > currentValues.max) {
+          setCurrentValues({
+            ...currentValues,
+            [key]: currentValues.max - selectorPoints,
+          });
+          return;
+        }
+
         setCurrentValues({
           ...currentValues,
           [key]: newValue,
-        });
-      } else {
-        setCurrentValues({
-          ...currentValues,
-          min: currentValues.max - selectorPoints,
         });
       }
     } else {
-      if (newValue <= rangeLimits.max && newValue > currentValues.min) {
+      if (newValue > rangeLimits.max || isNaN(newValue)) {
+        setCurrentValues({
+          ...currentValues,
+          [key]: rangeLimits.max,
+        });
+        return;
+      } else {
+        if (newValue - selectorPoints < currentValues.min) {
+          setCurrentValues({
+            ...currentValues,
+            [key]: currentValues.min + selectorPoints,
+          });
+          return;
+        }
+
         setCurrentValues({
           ...currentValues,
           [key]: newValue,
-        });
-      } else {
-        setCurrentValues({
-          ...currentValues,
-          max: currentValues.min + selectorPoints,
         });
       }
     }

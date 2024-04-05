@@ -1,4 +1,4 @@
-import { RefObject, MouseEvent, FocusEvent } from "react";
+import { RefObject, ChangeEvent } from "react";
 
 export interface RangeResponse {
   min: number;
@@ -18,5 +18,5 @@ export interface RangeProps {
   rangeRef: RefObject<HTMLDivElement>;
   minRef: RefObject<HTMLDivElement>;
   maxRef: RefObject<HTMLDivElement>;
-  onInputChange: (event: FocusEvent, key: string) => void;
+  onInputChange: (event: ChangeEvent, key: string) => void;
 }

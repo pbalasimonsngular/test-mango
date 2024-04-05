@@ -1,6 +1,5 @@
 "use client";
 
-import { ChangeEvent, FocusEvent, useEffect, useState } from "react";
 import styles from "./range.module.css";
 import { RangeProps } from "../models/range";
 
@@ -19,9 +18,6 @@ export default function Range({
   maxRef,
   onInputChange,
 }: RangeProps) {
-  const [min, setMin] = useState(currentMin);
-  const [max, setMax] = useState(currentMax);
-
   const minPercentage = ((currentMin - valueMin) / (valueMax - valueMin)) * 100;
   const maxPercentage = ((currentMax - valueMin) / (valueMax - valueMin)) * 100;
 
@@ -33,30 +29,6 @@ export default function Range({
     left: `${maxPercentage}%`,
   };
 
-  const handleInputChange = (
-    event: ChangeEvent<HTMLInputElement>,
-    key: string
-  ) => {
-    const { value } = event.target;
-    if (key === "min") {
-      setMin(Number(value));
-    } else if (key === "max") {
-      setMax(Number(value));
-    }
-  };
-
-  const handleBlur = (event: FocusEvent<HTMLInputElement>, key: string) => {
-    onInputChange(event, key);
-  };
-
-  useEffect(() => {
-    setMin(currentMin);
-  }, [currentMin]);
-
-  useEffect(() => {
-    setMax(currentMax);
-  }, [currentMax]);
-
   return (
     <>
       <div className={styles.container}>
@@ -64,9 +36,8 @@ export default function Range({
           <input
             type="text"
             className={styles["min-amount"]}
-            value={min}
-            onChange={(event) => handleInputChange(event, "min")}
-            onBlur={(event) => handleBlur(event, "min")}
+            value={currentMin}
+            onChange={(event) => onInputChange(event, "min")}
           />
           <span>€</span>
         </div>
@@ -106,9 +77,8 @@ export default function Range({
           <input
             type="text"
             className={styles["max-amount"]}
-            value={max}
-            onChange={(event) => handleInputChange(event, "max")}
-            onBlur={(event) => handleBlur(event, "max")}
+            value={currentMax}
+            onChange={(event) => onInputChange(event, "max")}
           />
           <span>€</span>
         </div>
