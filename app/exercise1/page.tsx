@@ -12,6 +12,7 @@ export default function Exercise1() {
   const minRef = useRef<HTMLDivElement>(null);
   const maxRef = useRef<HTMLDivElement>(null);
   const [rangeLimits, setRangeLimits] = useState({ min: 0, max: 0 });
+  const [inputValues, setInputValues] = useState({ min: 0, max: 0 });
   const [currentValues, setCurrentValues] = useState({ min: 0, max: 0 });
   const [isDragging, setIsDragging] = useState({ min: false, max: false });
   const [selectorPoints, setSelectorPoints] = useState(0);
@@ -31,6 +32,7 @@ export default function Exercise1() {
 
   useEffect(() => {
     if (rangeLimits.min !== null && rangeLimits.max !== null) {
+      setInputValues({ min: 0, max: rangeLimits.max });
       setCurrentValues({ min: 0, max: rangeLimits.max });
       const selectorPoints = calculateSelectorPoints();
       setSelectorPoints(selectorPoints);
@@ -79,30 +81,31 @@ export default function Exercise1() {
       const posX = event.clientX - rangeBoundingClientRect.left;
       const totalWidth = rangeBoundingClientRect.width;
 
-      let selectedValue = Math.round(
+      let newPosition = Math.round(
         (posX / totalWidth) * (rangeLimits.max - rangeLimits.min) +
           rangeLimits.min
       );
-      selectedValue = Math.max(rangeLimits.min, selectedValue);
-      selectedValue = Math.min(rangeLimits.max, selectedValue);
+      newPosition = Math.max(rangeLimits.min, newPosition);
+      newPosition = Math.min(rangeLimits.max, newPosition);
 
-      if (
-        isDragging.min &&
-        selectedValue + selectorPoints > currentValues.max
-      ) {
+      if (isDragging.min && newPosition + selectorPoints > currentValues.max) {
         return;
       } else if (
         isDragging.max &&
-        selectedValue - selectorPoints < currentValues.min
+        newPosition - selectorPoints < currentValues.min
       ) {
         return;
       }
 
       const range = getRange();
 
+      setInputValues({
+        ...inputValues,
+        [range]: newPosition,
+      });
       setCurrentValues({
         ...currentValues,
-        [range]: selectedValue,
+        [range]: newPosition,
       });
     }
   };
@@ -113,48 +116,76 @@ export default function Exercise1() {
   ) => {
     const newValue = Number(event.target.value);
 
+    if (isNaN(newValue)) {
+      return;
+    }
+    setInputValues({
+      ...currentValues,
+      [key]: newValue,
+    });
+  };
+
+  const handleBlur = (event: FocusEvent<HTMLInputElement>, key: string) => {
+    const newValue = Number(event.target.value);
+
+    if (key === "min" && (newValue < rangeLimits.min || isNaN(newValue))) {
+      setInputValues({
+        ...inputValues,
+        [key]: rangeLimits.min,
+      });
+      setCurrentValues({
+        ...currentValues,
+        [key]: rangeLimits.min,
+      });
+      return;
+    }
+
+    if (key === "max" && (newValue > rangeLimits.max || isNaN(newValue))) {
+      setInputValues({
+        ...inputValues,
+        [key]: rangeLimits.max,
+      });
+      setCurrentValues({
+        ...currentValues,
+        [key]: rangeLimits.max,
+      });
+      return;
+    }
+
     if (key === "min") {
-      if (newValue < rangeLimits.min || isNaN(newValue)) {
+      if (newValue + selectorPoints > currentValues.max) {
         setCurrentValues({
           ...currentValues,
-          [key]: rangeLimits.min,
+          [key]: currentValues.max - selectorPoints,
+        });
+        setInputValues({
+          ...inputValues,
+          [key]: currentValues.max - selectorPoints,
         });
         return;
-      } else {
-        if (newValue + selectorPoints > currentValues.max) {
-          setCurrentValues({
-            ...currentValues,
-            [key]: currentValues.max - selectorPoints,
-          });
-          return;
-        }
-
-        setCurrentValues({
-          ...currentValues,
-          [key]: newValue,
-        });
       }
+
+      setCurrentValues({
+        ...currentValues,
+        [key]: newValue,
+      });
     } else {
-      if (newValue > rangeLimits.max || isNaN(newValue)) {
+      if (newValue - selectorPoints < currentValues.min) {
         setCurrentValues({
           ...currentValues,
-          [key]: rangeLimits.max,
+          [key]: currentValues.min + selectorPoints,
+        });
+        setInputValues({
+          ...inputValues,
+          [key]: currentValues.min + selectorPoints,
         });
         return;
-      } else {
-        if (newValue - selectorPoints < currentValues.min) {
-          setCurrentValues({
-            ...currentValues,
-            [key]: currentValues.min + selectorPoints,
-          });
-          return;
-        }
-
-        setCurrentValues({
-          ...currentValues,
-          [key]: newValue,
-        });
       }
+
+      setCurrentValues({
+        ...currentValues,
+        [key]: newValue,
+      });
     }
   };
 
@@ -182,9 +213,12 @@ export default function Exercise1() {
         valueText="Normal range from min to max number"
         currentMin={currentValues.min}
         currentMax={currentValues.max}
+        inputMin={inputValues.min}
+        inputMax={inputValues.max}
         isDraggingMin={isDragging.min}
         isDraggingMax={isDragging.max}
         onInputChange={handleInputChange}
+        onBlur={handleBlur}
       />
     </div>
   );

@@ -9,6 +9,8 @@ export default function Range({
   valueMax,
   currentMin,
   currentMax,
+  inputMin,
+  inputMax,
   valueText,
   isDraggingMin,
   isDraggingMax,
@@ -17,6 +19,7 @@ export default function Range({
   minRef,
   maxRef,
   onInputChange,
+  onBlur,
 }: RangeProps) {
   const minPercentage = ((currentMin - valueMin) / (valueMax - valueMin)) * 100;
   const maxPercentage = ((currentMax - valueMin) / (valueMax - valueMin)) * 100;
@@ -36,8 +39,9 @@ export default function Range({
           <input
             type="text"
             className={styles["min-amount"]}
-            value={currentMin}
+            value={inputMin}
             onChange={(event) => onInputChange(event, "min")}
+            onBlur={(event) => onBlur(event, "min")}
           />
           <span>€</span>
         </div>
@@ -77,8 +81,9 @@ export default function Range({
           <input
             type="text"
             className={styles["max-amount"]}
-            value={currentMax}
+            value={inputMax}
             onChange={(event) => onInputChange(event, "max")}
+            onBlur={(event) => onBlur(event, "max")}
           />
           <span>€</span>
         </div>
