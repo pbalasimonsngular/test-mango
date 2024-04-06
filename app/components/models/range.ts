@@ -1,14 +1,18 @@
 import { RefObject, ChangeEvent, FocusEvent } from "react";
 
-export interface RangeResponse {
+export type NormalRange = {
   min: number;
   max: number;
-}
+};
+
+export type FixedRange = number[];
+
+export type RangeValues = NormalRange | FixedRange;
 
 export interface RangeProps {
   width: number;
-  valueMin: number;
-  valueMax: number;
+  limitMin: number;
+  limitMax: number;
   currentMin: number;
   currentMax: number;
   inputMin: number;

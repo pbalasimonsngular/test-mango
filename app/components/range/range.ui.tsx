@@ -5,8 +5,8 @@ import { RangeProps } from "../models/range";
 
 export default function Range({
   width,
-  valueMin,
-  valueMax,
+  limitMin,
+  limitMax,
   currentMin,
   currentMax,
   inputMin,
@@ -21,8 +21,8 @@ export default function Range({
   onInputChange,
   onBlur,
 }: RangeProps) {
-  const minPercentage = ((currentMin - valueMin) / (valueMax - valueMin)) * 100;
-  const maxPercentage = ((currentMax - valueMin) / (valueMax - valueMin)) * 100;
+  const minPercentage = ((currentMin - limitMin) / (limitMax - limitMin)) * 100;
+  const maxPercentage = ((currentMax - limitMin) / (limitMax - limitMin)) * 100;
 
   const minSelectorStyle = {
     left: `${minPercentage}%`,
@@ -51,8 +51,8 @@ export default function Range({
             width: width ? `${width}px` : "100%",
           }}
           role="slider"
-          aria-valuemin={valueMin}
-          aria-valuemax={valueMax}
+          aria-valuemin={limitMin}
+          aria-valuemax={limitMax}
           aria-valuetext={valueText}
           ref={rangeRef}
         >
