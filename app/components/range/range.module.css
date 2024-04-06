@@ -26,6 +26,11 @@
   border: 0;
 }
 
+.min-amount:disabled,
+.max-amount:disabled {
+  background-color: white;
+}
+
 .range {
   position: relative;
   height: 2px;

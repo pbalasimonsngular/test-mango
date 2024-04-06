@@ -26,4 +26,5 @@ export interface RangeProps {
   maxRef: RefObject<HTMLDivElement>;
   onInputChange: (event: ChangeEvent, key: string) => void;
   onBlur: (vent: FocusEvent<HTMLInputElement>, key: string) => void;
+  type: string;
 }

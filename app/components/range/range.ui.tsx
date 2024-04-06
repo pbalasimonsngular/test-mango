@@ -20,6 +20,7 @@ export default function Range({
   maxRef,
   onInputChange,
   onBlur,
+  type,
 }: RangeProps) {
   const minPercentage = ((currentMin - limitMin) / (limitMax - limitMin)) * 100;
   const maxPercentage = ((currentMax - limitMin) / (limitMax - limitMin)) * 100;
@@ -42,6 +43,7 @@ export default function Range({
             value={inputMin}
             onChange={(event) => onInputChange(event, "min")}
             onBlur={(event) => onBlur(event, "min")}
+            disabled={type === "normal" ? false : true}
           />
           <span>€</span>
         </div>
@@ -84,6 +86,7 @@ export default function Range({
             value={inputMax}
             onChange={(event) => onInputChange(event, "max")}
             onBlur={(event) => onBlur(event, "max")}
+            disabled={type === "normal" ? false : true}
           />
           <span>€</span>
         </div>

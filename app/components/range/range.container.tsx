@@ -46,19 +46,19 @@ export default function RangeContainer({
       setSelectorPoints(selectorPoints);
     } else {
       const fixedValues = values as FixedRange;
-      let min = fixedValues[0];
-      let max = fixedValues[fixedValues.length - 1];
+      let min = fixedValues.length > 0 ? fixedValues[0]: 0;
+      let max = fixedValues[fixedValues.length - 1] ?? 0;
       commonValues = { min, max };
       setFixedValues(fixedValues);
     }
+
+    console.log({ commonValues });
 
     setLimits(commonValues);
     setInputValues(commonValues);
     setCurrentValues(commonValues);
 
-    console.log({ normalValues });
-    console.log({ fixedValues });
-    console.log({ limits });
+ 
   }, [values]);
 
   const getRange = () => {
@@ -83,7 +83,6 @@ export default function RangeContainer({
       const rangePoints = limits.max - limits.min;
       selectorPoints = Math.round((selectorWidth * rangePoints) / rangeWidth);
     }
-    console.log({ selectorPoints });
     return selectorPoints;
   };
 
@@ -245,6 +244,7 @@ export default function RangeContainer({
         isDraggingMax={isDragging.max}
         onInputChange={handleInputChange}
         onBlur={handleBlur}
+        type={type}
       />
     </div>
   );
