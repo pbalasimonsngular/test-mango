@@ -1,7 +1,7 @@
 "use server";
 
 import { FixedRange, NormalRange } from "../components/models/range";
-import { MIN, MAX } from "../constants/range";
+import { MIN_VALUE, MAX_VALUE } from "../constants/range";
 
 export async function getNormalRange(): Promise<NormalRange> {
   try {
@@ -10,7 +10,7 @@ export async function getNormalRange(): Promise<NormalRange> {
     return ranges;
   } catch (error) {
     console.error(`Error fetching normal range. Set default values. ${error}`);
-    return { min: MIN, max: MAX };
+    return { min: MIN_VALUE, max: MAX_VALUE };
   }
 }
 

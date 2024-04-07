@@ -2,7 +2,7 @@
 
 import styles from "./range.module.css";
 import { RangeProps } from "../models/range";
-import { NORMAL } from "../../constants/range";
+import { MAX, MIN, NORMAL } from "../../constants/range";
 
 export default function Range({
   width,
@@ -42,8 +42,8 @@ export default function Range({
             type="text"
             className={styles["min-amount"]}
             value={inputMin}
-            onChange={(event) => onInputChange(event, "min")}
-            onBlur={(event) => onBlur(event, "min")}
+            onChange={(event) => onInputChange(event, MIN)}
+            onBlur={(event) => onBlur(event, MIN)}
             disabled={type === NORMAL ? false : true}
           />
           <span>€</span>
@@ -60,7 +60,7 @@ export default function Range({
           ref={rangeRef}
         >
           <div
-            onMouseDown={() => handleMouseDown("min")}
+            onMouseDown={() => handleMouseDown(MIN)}
             className={styles["min-selector"]}
             style={{
               ...minSelectorStyle,
@@ -70,7 +70,7 @@ export default function Range({
             ref={minRef}
           ></div>
           <div
-            onMouseDown={() => handleMouseDown("max")}
+            onMouseDown={() => handleMouseDown(MAX)}
             className={styles["max-selector"]}
             style={{
               ...maxSelectorStyle,
@@ -85,8 +85,8 @@ export default function Range({
             type="text"
             className={styles["max-amount"]}
             value={inputMax}
-            onChange={(event) => onInputChange(event, "max")}
-            onBlur={(event) => onBlur(event, "max")}
+            onChange={(event) => onInputChange(event, MAX)}
+            onBlur={(event) => onBlur(event, MAX)}
             disabled={type === NORMAL ? false : true}
           />
           <span>€</span>

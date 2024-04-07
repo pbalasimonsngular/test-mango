@@ -5,7 +5,7 @@ import Range from "./range.ui";
 import { FixedRange, NormalRange, RangeValues } from "../models/range";
 
 import styles from "./range.module.css";
-import { NORMAL } from "../../constants/range";
+import { MAX, MIN, NORMAL } from "../../constants/range";
 
 export default function RangeContainer({
   type,
@@ -54,7 +54,7 @@ export default function RangeContainer({
   }, [values]);
 
   const getRange = () => {
-    return isDragging.min ? "min" : "max";
+    return isDragging.min ? MIN : MAX;
   };
 
   const calculateSelectorPoints = () => {
@@ -171,7 +171,7 @@ export default function RangeContainer({
     const newInputValue = Number(event.target.value);
     let newValue = 0;
 
-    if (key === "min") {
+    if (key === MIN) {
       if (newInputValue < limits.min || isNaN(newInputValue)) {
         newValue = limits.min;
       } else if (newInputValue + selectorPoints > currentValues.max) {
