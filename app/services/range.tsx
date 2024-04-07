@@ -9,7 +9,7 @@ export async function getNormalRange(): Promise<NormalRange> {
     const ranges: NormalRange = await response.json();
     return ranges;
   } catch (error) {
-    console.error(`Error fetching normal range. Set default range. ${error}`);
+    console.error(`Error fetching normal range. Set default values. ${error}`);
     return { min: MIN, max: MAX };
   }
 }
@@ -17,10 +17,11 @@ export async function getNormalRange(): Promise<NormalRange> {
 export async function getFixedRange(): Promise<FixedRange> {
   try {
     const response = await fetch("http://demo0145425.mockable.io/exercise2");
-    const ranges: FixedRange = await response.json();
+    const data = await response.json();
+    const ranges: FixedRange = data.values;
     return ranges;
   } catch (error) {
-    console.error(`Error fetching normal range. Set default range. ${error}`);
+    console.error(`Error fetching fixed range. Set default values. ${error}`);
     return [1.99, 5.99, 10.99, 30.99, 50.99, 70.99];
   }
 }

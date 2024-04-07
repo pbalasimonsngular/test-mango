@@ -46,19 +46,15 @@ export default function RangeContainer({
       setSelectorPoints(selectorPoints);
     } else {
       const fixedValues = values as FixedRange;
-      let min = fixedValues.length > 0 ? fixedValues[0]: 0;
+      let min = fixedValues.length > 0 ? fixedValues[0] : 0;
       let max = fixedValues[fixedValues.length - 1] ?? 0;
       commonValues = { min, max };
       setFixedValues(fixedValues);
     }
 
-    console.log({ commonValues });
-
     setLimits(commonValues);
     setInputValues(commonValues);
     setCurrentValues(commonValues);
-
- 
   }, [values]);
 
   const getRange = () => {
@@ -97,44 +93,69 @@ export default function RangeContainer({
 
   const handleMouseMove = (event: MouseEvent) => {
     if (isDragging.min || isDragging.max) {
-      calculateNewPosition(event);
+      calculateNewValue(event);
     }
   };
 
-  const calculateNewPosition = (event: MouseEvent) => {
+  const canMoveMinSelector = (newValue: number): boolean => {
+    return newValue + selectorPoints <= currentValues.max;
+  };
+
+  const canMoveMaxSelector = (newValue: number): boolean => {
+    return newValue - selectorPoints >= currentValues.min;
+  };
+
+  const calculateNewValue = (event: MouseEvent) => {
     const rangeBoundingClientRect = rangeRef.current?.getBoundingClientRect();
-
     if (rangeBoundingClientRect) {
-      const posX = event.clientX - rangeBoundingClientRect.left;
-      const totalWidth = rangeBoundingClientRect.width;
+      let newValue = 0;
+      const offsetX = event.clientX - rangeBoundingClientRect.left;
+      const rangeWidth = rangeBoundingClientRect.width;
 
-      let newPosition = Math.round(
-        (posX / totalWidth) * (limits.max - limits.min) + limits.min
+      newValue = Math.round(
+        (offsetX / rangeWidth) * (limits.max - limits.min) + limits.min
       );
-      newPosition = Math.max(limits.min, newPosition);
-      newPosition = Math.min(limits.max, newPosition);
-
-      if (isDragging.min && newPosition + selectorPoints > currentValues.max) {
-        return;
-      } else if (
-        isDragging.max &&
-        newPosition - selectorPoints < currentValues.min
-      ) {
-        return;
-      }
+      newValue = Math.max(limits.min, newValue);
+      newValue = Math.min(limits.max, newValue);
 
       const range = getRange();
 
+      if (type === "normal") {
+        if (isDragging.min && !canMoveMinSelector(newValue)) {
+          return;
+        }
+        if (isDragging.max && !canMoveMaxSelector(newValue)) {
+          return;
+        }
+      } else {
+        const rangeValues = values as FixedRange;
+
+        let closestValue = rangeValues.reduce((prev, curr) => {
+          return Math.abs(curr - newValue) < Math.abs(prev - newValue)
+            ? curr
+            : prev;
+        });
+
+        if (isDragging.min && closestValue >= inputValues.max) {
+          return;
+        } else if (isDragging.max && closestValue <= inputValues.min) {
+          return;
+        }
+
+        newValue = closestValue;
+      }
+
       setInputValues({
         ...inputValues,
-        [range]: newPosition,
+        [range]: newValue,
       });
       setCurrentValues({
         ...currentValues,
-        [range]: newPosition,
+        [range]: newValue,
       });
     }
   };
+
   const handleInputChange = (
     event: FocusEvent<HTMLInputElement>,
     key: string
