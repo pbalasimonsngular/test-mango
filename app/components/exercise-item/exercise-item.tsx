@@ -9,8 +9,8 @@ export default function ExerciseItem({
   path: string;
 }) {
   return (
-    <Link href={path} className={styles.link}>
-      <article className={styles.exercise}>{text}</article>
+    <Link data-testid="link" href={path} className={styles.link}>
+      <article data-testid="article" className={styles.exercise}>{text}</article>
     </Link>
   );
 }

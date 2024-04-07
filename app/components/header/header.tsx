@@ -4,9 +4,10 @@ import Link from "next/link";
 
 export default function Header() {
   return (
-    <header className={styles.header}>
-      <Link href="/" tabIndex={-1}>
+    <header data-testid="header" className={styles.header}>
+      <Link data-testid="link" href="/" tabIndex={-1}>
         <Image
+          data-testid="img"
           src="https://st.mngbcn.com/images/headerNew/logos/mango.svg"
           alt="logo"
           width={149}
