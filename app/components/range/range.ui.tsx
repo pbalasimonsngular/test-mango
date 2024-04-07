@@ -45,6 +45,7 @@ export default function Range({
             onChange={(event) => onInputChange(event, MIN)}
             onBlur={(event) => onBlur(event, MIN)}
             disabled={type === NORMAL ? false : true}
+            data-testid="min-amount"
           />
           <span>€</span>
         </div>
@@ -58,6 +59,7 @@ export default function Range({
           aria-valuemax={limitMax}
           aria-valuetext={valueText}
           ref={rangeRef}
+          data-testid="range"
         >
           <div
             onMouseDown={() => handleMouseDown(MIN)}
@@ -68,6 +70,7 @@ export default function Range({
             }}
             tabIndex={1}
             ref={minRef}
+            data-testid="min-selector"
           ></div>
           <div
             onMouseDown={() => handleMouseDown(MAX)}
@@ -78,6 +81,7 @@ export default function Range({
             }}
             tabIndex={2}
             ref={maxRef}
+            data-testid="max-selector"
           ></div>
         </div>
         <div className={styles["max-container"]}>
@@ -88,6 +92,7 @@ export default function Range({
             onChange={(event) => onInputChange(event, MAX)}
             onBlur={(event) => onBlur(event, MAX)}
             disabled={type === NORMAL ? false : true}
+            data-testid="max-amount"
           />
           <span>€</span>
         </div>
