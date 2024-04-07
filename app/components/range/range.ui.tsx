@@ -2,6 +2,7 @@
 
 import styles from "./range.module.css";
 import { RangeProps } from "../models/range";
+import { NORMAL } from "../../constants/range";
 
 export default function Range({
   width,
@@ -43,7 +44,7 @@ export default function Range({
             value={inputMin}
             onChange={(event) => onInputChange(event, "min")}
             onBlur={(event) => onBlur(event, "min")}
-            disabled={type === "normal" ? false : true}
+            disabled={type === NORMAL ? false : true}
           />
           <span>€</span>
         </div>
@@ -86,7 +87,7 @@ export default function Range({
             value={inputMax}
             onChange={(event) => onInputChange(event, "max")}
             onBlur={(event) => onBlur(event, "max")}
-            disabled={type === "normal" ? false : true}
+            disabled={type === NORMAL ? false : true}
           />
           <span>€</span>
         </div>

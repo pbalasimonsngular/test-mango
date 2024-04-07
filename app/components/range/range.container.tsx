@@ -5,13 +5,16 @@ import Range from "./range.ui";
 import { FixedRange, NormalRange, RangeValues } from "../models/range";
 
 import styles from "./range.module.css";
+import { NORMAL } from "../../constants/range";
 
 export default function RangeContainer({
   type,
   values,
+  valueText,
 }: {
   type: string;
   values: RangeValues;
+  valueText: string;
 }) {
   const rangeRef = useRef<HTMLDivElement>(null);
   const minRef = useRef<HTMLDivElement>(null);
@@ -31,7 +34,7 @@ export default function RangeContainer({
       max: 0,
     };
 
-    if (type === "normal") {
+    if (type === NORMAL) {
       const normalValues = values as NormalRange;
       commonValues = { ...normalValues };
 
@@ -113,7 +116,7 @@ export default function RangeContainer({
 
       const range = getRange();
 
-      if (type === "normal") {
+      if (type === NORMAL) {
         if (isDragging.min && !canMoveMinSelector(newValue)) {
           return;
         }
@@ -217,7 +220,7 @@ export default function RangeContainer({
         handleMouseDown={handleMouseDown}
         limitMin={limits.min}
         limitMax={limits.max}
-        valueText="Normal range from min to max number"
+        valueText={valueText}
         currentMin={currentValues.min}
         currentMax={currentValues.max}
         inputMin={inputValues.min}
