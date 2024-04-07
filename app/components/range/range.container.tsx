@@ -165,67 +165,35 @@ export default function RangeContainer({
   };
 
   const handleBlur = (event: FocusEvent<HTMLInputElement>, key: string) => {
-    const newValue = Number(event.target.value);
-
-    if (key === "min" && (newValue < limits.min || isNaN(newValue))) {
-      setInputValues({
-        ...inputValues,
-        [key]: limits.min,
-      });
-      setCurrentValues({
-        ...currentValues,
-        [key]: limits.min,
-      });
-      return;
-    }
-
-    if (key === "max" && (newValue > limits.max || isNaN(newValue))) {
-      setInputValues({
-        ...inputValues,
-        [key]: limits.max,
-      });
-      setCurrentValues({
-        ...currentValues,
-        [key]: limits.max,
-      });
-      return;
-    }
+    const newInputValue = Number(event.target.value);
+    let newValue = 0;
 
     if (key === "min") {
-      if (newValue + selectorPoints > currentValues.max) {
-        setCurrentValues({
-          ...currentValues,
-          [key]: currentValues.max - selectorPoints,
-        });
-        setInputValues({
-          ...inputValues,
-          [key]: currentValues.max - selectorPoints,
-        });
-        return;
+      if (newInputValue < limits.min || isNaN(newInputValue)) {
+        newValue = limits.min;
+      } else if (newInputValue + selectorPoints > currentValues.max) {
+        newValue = currentValues.max - selectorPoints;
+      } else {
+        newValue = newInputValue;
       }
-
-      setCurrentValues({
-        ...currentValues,
-        [key]: newValue,
-      });
     } else {
-      if (newValue - selectorPoints < currentValues.min) {
-        setCurrentValues({
-          ...currentValues,
-          [key]: currentValues.min + selectorPoints,
-        });
-        setInputValues({
-          ...inputValues,
-          [key]: currentValues.min + selectorPoints,
-        });
-        return;
+      if (newInputValue > limits.max || isNaN(newInputValue)) {
+        newValue = limits.max;
+      } else if (newInputValue - selectorPoints < currentValues.min) {
+        newValue = currentValues.min + selectorPoints;
+      } else {
+        newValue = newInputValue;
       }
-
-      setCurrentValues({
-        ...currentValues,
-        [key]: newValue,
-      });
     }
+
+    setInputValues({
+      ...currentValues,
+      [key]: newValue,
+    });
+    setCurrentValues({
+      ...currentValues,
+      [key]: newValue,
+    });
   };
 
   useEffect(() => {
