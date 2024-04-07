@@ -16,11 +16,6 @@ export default function RangeContainer({
   const rangeRef = useRef<HTMLDivElement>(null);
   const minRef = useRef<HTMLDivElement>(null);
   const maxRef = useRef<HTMLDivElement>(null);
-  const [normalValues, setNormalValues] = useState<NormalRange>({
-    min: 0,
-    max: 0,
-  });
-  const [fixedValues, setFixedValues] = useState<FixedRange>([]);
   const [limits, setLimits] = useState({
     min: 0,
     max: 0,
@@ -39,7 +34,6 @@ export default function RangeContainer({
     if (type === "normal") {
       const normalValues = values as NormalRange;
       commonValues = { ...normalValues };
-      setNormalValues(normalValues);
 
       // in case of normal range calculate selector size
       const selectorPoints = calculateSelectorPoints();
@@ -49,7 +43,6 @@ export default function RangeContainer({
       let min = fixedValues.length > 0 ? fixedValues[0] : 0;
       let max = fixedValues[fixedValues.length - 1] ?? 0;
       commonValues = { min, max };
-      setFixedValues(fixedValues);
     }
 
     setLimits(commonValues);
