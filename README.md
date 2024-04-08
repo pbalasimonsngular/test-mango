@@ -67,3 +67,4 @@ have to be used in the component. Example: {rangeValues: []}
  2. ```$ cd test-mago```
  3. ```$ npm install```
  4. ```$ npm run dev```
+ 5. Open the url ```http://localhost:8080```
