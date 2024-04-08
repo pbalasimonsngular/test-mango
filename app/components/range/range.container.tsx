@@ -82,7 +82,6 @@ export default function RangeContainer({
       const rangePoints = limits.max - limits.min;
       selectorPoints = Math.round((selectorWidth * rangePoints) / rangeWidth);
     }
-    console.log(selectorPoints);
     return selectorPoints;
   };
   /**
