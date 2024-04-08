@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  FocusEvent,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import { FocusEvent, useEffect, useRef, useState } from "react";
 import Range from "./range.ui";
 import { FixedRange, NormalRange, RangeValues } from "../models/range";
 
@@ -43,6 +37,10 @@ export default function RangeContainer({
     if (type === NORMAL) {
       const normalValues = values as NormalRange;
       commonValues = { ...normalValues };
+
+      // in case of normal range calculate selector width
+      const selectorPoints = calculateSelectorPoints();
+      setSelectorPoints(selectorPoints);
     } else {
       const fixedValues = values as FixedRange;
       let min = fixedValues.length > 0 ? fixedValues[0] : 0;
@@ -53,14 +51,6 @@ export default function RangeContainer({
     setLimits(commonValues);
     setInputValues(commonValues);
     setCurrentValues(commonValues);
-  }, [values]);
-
-  useLayoutEffect(() => {
-    if (type === NORMAL) {
-      // in case of normal range calculate selector width
-      const selectorPoints = calculateSelectorPoints();
-      setSelectorPoints(selectorPoints);
-    }
   }, [values]);
 
   /**
