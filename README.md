@@ -60,3 +60,10 @@ have to be used in the component. Example: {rangeValues: []}
 
  ### Pending
  When some bullet is on hover, this bullet has to be bigger. Now when you click on a selector it keeps the width.
+
+ ### Run project
+ To install the project in a local machine do the following steps:
+ 1. ```$ git clone https://github.com/pbalasimonsngular/test-mango```
+ 2. ```$ cd test-mago```
+ 3. ```$ npm install```
+ 4. ```$ npm run dev```
