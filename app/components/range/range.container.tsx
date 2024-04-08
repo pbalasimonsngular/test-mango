@@ -38,7 +38,7 @@ export default function RangeContainer({
       const normalValues = values as NormalRange;
       commonValues = { ...normalValues };
 
-      // in case of normal range calculate selector size
+      // in case of normal range calculate selector width
       const selectorPoints = calculateSelectorPoints();
       setSelectorPoints(selectorPoints);
     } else {
@@ -53,10 +53,17 @@ export default function RangeContainer({
     setCurrentValues(commonValues);
   }, [values]);
 
+  /**
+   *  @returns "min" or "max" depending which selector are selected
+   */
   const getRange = () => {
     return isDragging.min ? MIN : MAX;
   };
 
+  /**
+   * in case of rendering a NORMAL range. it calculate the width of a selector (min) to have it
+   * ready when need it to avoid collisions
+   */
   const calculateSelectorPoints = () => {
     let selectorPoints = 0;
 
@@ -77,30 +84,56 @@ export default function RangeContainer({
     }
     return selectorPoints;
   };
-
+  /**
+   *
+   * @param range "min" or "max"
+   * set range selected to true
+   */
   const handleMouseDown = (range: string) => {
     setIsDragging({ ...isDragging, [range]: true });
   };
 
+  /**
+   *
+   * @param range "min" or "max"
+   * set range selected to false
+   */
   const handleMouseUp = () => {
     const range = getRange();
     setIsDragging({ ...isDragging, [range]: false });
   };
 
+  /**
+   *  @param event: MouseEvent
+   * call calculateNewValue of the selector selected
+   */
   const handleMouseMove = (event: MouseEvent) => {
     if (isDragging.min || isDragging.max) {
       calculateNewValue(event);
     }
   };
 
+  /**
+   * @param newValue
+   * @returns if the min selector can be moved
+   */
   const canMoveMinSelector = (newValue: number): boolean => {
     return newValue + selectorPoints <= currentValues.max;
   };
 
+  /**
+   * @param newValue
+   * @returns if the max selector can be moved
+   */
   const canMoveMaxSelector = (newValue: number): boolean => {
     return newValue - selectorPoints >= currentValues.min;
   };
 
+  /**
+   *
+   * @param event
+   * set the new input value and set the selector in the new position
+   */
   const calculateNewValue = (event: MouseEvent) => {
     const rangeBoundingClientRect = rangeRef.current?.getBoundingClientRect();
     if (rangeBoundingClientRect) {
@@ -152,6 +185,13 @@ export default function RangeContainer({
     }
   };
 
+  /**
+   *
+   * @param event
+   * @param key "min" or "max"
+   * update the inputs with the user values
+   */
+
   const handleInputChange = (
     event: FocusEvent<HTMLInputElement>,
     key: string
@@ -166,6 +206,12 @@ export default function RangeContainer({
       [key]: newValue,
     });
   };
+
+  /**
+   * @param event
+   * @param key "min" or "max"
+   * update the input values with the correct value and set the selector in the new positions
+   */
 
   const handleBlur = (event: FocusEvent<HTMLInputElement>, key: string) => {
     const newInputValue = Number(event.target.value);
@@ -199,6 +245,9 @@ export default function RangeContainer({
     });
   };
 
+  /**
+   * add events listeners
+   */
   useEffect(() => {
     if (isDragging.min || isDragging.max) {
       window.addEventListener("mousemove", handleMouseMove);
